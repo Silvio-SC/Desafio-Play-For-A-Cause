@@ -19,7 +19,7 @@ export class UsersService {
     const user = new User()
     Object.assign(user, {...createUserDto})
 
-    const a = await this.prisma.user.create({
+    await this.prisma.user.create({
       data: { ...user }
     })
 

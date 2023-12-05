@@ -11,10 +11,41 @@ datasource db {
 }
 
 model User {
-  id String @id
-  name String
-  email String @unique
-  password String
+  id        String       @id
+  name      String
+  email     String       @unique
+  password  String
+  rooms     UserOnRoom[]
+  messagens Message[]
 
-  @@map("users") 
+  @@map("users")
+}
+
+model Room {
+  id    String       @id
+  texts Message[]
+  users UserOnRoom[]
+
+  @@map("rooms")
+}
+
+model Message {
+  id        String  @id
+  text      String
+  user      User    @relation(fields: [owner_id], references: [id])
+  owner_id  String
+  createdAt String
+  Room      Room   @relation(fields: [roomId], references: [id])
+  roomId    String
+
+  @@map("messages")
+}
+
+model UserOnRoom {
+  room    Room   @relation(fields: [roomId], references: [id])
+  roomId  String
+  users   User   @relation(fields: [usersId], references: [id])
+  usersId String
+
+  @@id([usersId, roomId])
 }

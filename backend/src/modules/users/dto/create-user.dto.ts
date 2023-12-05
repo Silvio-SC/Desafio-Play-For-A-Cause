@@ -1,6 +1,7 @@
 import { Exclude, Transform } from "class-transformer"
+import { Optional } from "@nestjs/common/decorators"
 import { hashSync } from "bcryptjs"
-import { IsString, IsEmail, Min, IsNotEmpty, MinLength } from "class-validator"
+import { IsString, IsEmail, IsNotEmpty, MinLength, ArrayMaxSize } from "class-validator"
 
  
 export class CreateUserDto {
@@ -12,7 +13,13 @@ export class CreateUserDto {
     @IsEmail()
     email: string
 
+    // @ArrayMaxSize(2)
+    // @Optional()
+    // rooms: string[]
+
     @MinLength(2)
     @Transform(({value}: {value: string}) => hashSync(value, 10))
     password: string
+
+    
 }
