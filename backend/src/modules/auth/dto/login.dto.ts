@@ -1,20 +1,8 @@
-import { Exclude, Transform } from "class-transformer"
-import { Optional } from "@nestjs/common/decorators"
-import { hashSync } from "bcryptjs"
 import { IsString, IsEmail, IsNotEmpty, MinLength, ArrayMaxSize } from "class-validator"
 import { ApiProperty } from "@nestjs/swagger"
 
  
-export class CreateUserDto {
-    @ApiProperty({
-        description: "nome do usuario",
-        type: String,
-        default: "Silvio"
-    })
-    @IsString()
-    @IsNotEmpty()
-    name: string
-
+export class LoginDto {
     @ApiProperty({
         description: "email do usuario",
         type: String,
@@ -30,8 +18,5 @@ export class CreateUserDto {
         default: "12345678"
     })
     @MinLength(8)
-    @Transform(({value}: {value: string}) => hashSync(value, 10))
     password: string
-
-    
 }

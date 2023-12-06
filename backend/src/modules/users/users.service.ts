@@ -59,4 +59,11 @@ export class UsersService {
     })
     return;
   }
+
+  async findUserByEmail(email: string) {
+    const foundedUser = await this.prisma.user.findUnique({
+      where: {email}
+    })
+    return foundedUser
+  }
 }
