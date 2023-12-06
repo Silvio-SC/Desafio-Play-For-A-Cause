@@ -8,25 +8,29 @@ import Image from "next/image"
 import logo from "../../../public/PlayLogo.png"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useUser } from "@/contexts/userContext"
+import api from "@/services/api"
 
 export default function Register () {
 
-    // const {createAccount} = useContext(ClientContext)
-    // const { IsLogin } = useContext(Context)
-
-    // useEffect(() => {
+  // const { IsLogin } = useContext(Context)
+  
+  // useEffect(() => {
     //     IsLogin()
     // }, [])
     const router = useRouter()
-
+    
+    const { createUser, loading } = useUser()
   
-    const {handleSubmit, register} = useForm<RegisterData>({
+    const {handleSubmit, register, reset, formState: { errors }} = useForm<RegisterData>({
         resolver: zodResolver(RegisterSchema)
     })
 
     const submit = (data:RegisterData) => {
-        // createAccount(data)
-        router.push('/Login')
+      createUser(data)
+      router.push('/Login')
+
+      reset()
     }
 
     const svgLoading = (
@@ -51,23 +55,26 @@ export default function Register () {
                         register={register('name')} 
                         placeholder={"insira seu nome aqui..."} 
                         type={"text"} 
-                        label={"Nome"}  />
+                        label={"Nome"}  
+                        error={errors.name} />
                       <Input 
                         name={"email"} 
                         register={register('email')} 
                         placeholder={"insira seu email aqui..."} 
                         type={"email"} 
-                        label={"Email"}  />
+                        label={"Email"}  
+                        error={errors.email} />
                       <Input 
                         name={"password"} 
                         register={register('password')} 
                         placeholder={"insira sua senha aqui..."} 
                         type={"password"} 
-                        label={"Senha"}  />
+                        label={"Senha"}  
+                        error={errors.password} />
                     <button 
                         type="submit" 
                         className='bg-emerald-600 text-white p-2 rounded-2xl w-full max-w-xs mt-8 hover:bg-emerald-800 flex justify-center'>
-                        { false ? svgLoading : "Registra-se" }
+                        { loading ? svgLoading : "Registra-se" }
                     </button>
                     <p className="mt-6 text-sm lg:text-base">Já é cadastrado? faço o  
                       <Link href={"/Login"} className="hover:text-emerald-600"> Log in aqui !</Link>

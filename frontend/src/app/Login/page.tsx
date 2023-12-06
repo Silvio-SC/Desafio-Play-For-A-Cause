@@ -66,7 +66,7 @@ export default function Login () {
                         { false ? svgLoading : "Entrar" }
                     </button>
                     <p className="mt-6 text-sm lg:text-base">Ainda não é cadastrado? 
-                      <Link href={"/Regsiter"} className="hover:text-emerald-600"> registre-se aqui</Link>
+                      <Link href={"/Register"} className="hover:text-emerald-600"> registre-se aqui</Link>
                     </p>
                 </form>
 

@@ -24,11 +24,11 @@ export default function Home() {
         <div className=' w-full items-center flex gap-4 flex-col text-center text-lg lg:gap-6'>
           <Image src={wall} alt='arte da Play for a cause' className='max-w-sm hidden lg:block rounded-2xl'></Image>
           <button 
-            className='bg-emerald-600 text-white p-2 rounded-2xl w-full max-w-xs mt-8'
+            className='bg-emerald-600 text-white p-2 rounded-2xl w-full max-w-xs mt-8 hover:bg-emerald-800'
             onClick={() => router.push('/Register')}
             >Sign Up</button>
           <span className='flex gap-1'>
-            <p>Existing account?</p><Link href={'/Login'} className='font-bold'>Log in</Link>
+            <p>Já é cadastrado ?</p><Link href={'/Login'} className="hover:text-emerald-600 font-bold">Log in</Link>
           </span>
         </div>
       </div>
