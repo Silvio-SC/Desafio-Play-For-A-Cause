@@ -44,9 +44,10 @@ export class RoomsService {
     return plainToInstance(Room, createdRoom)
   }
 
-  async findAll() {
+  async findAll(userId: string) {
     const rooms = await this.prisma.room.findMany({
-      select: {users: true}
+      select: {id:true, texts: true, users: { select: { users:true }}},
+      where: {users: { some: { usersId: userId}}}
     })
     return rooms;
   }

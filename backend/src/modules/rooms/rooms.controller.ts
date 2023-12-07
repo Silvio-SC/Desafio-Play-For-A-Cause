@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UseGuards } from '@nestjs/common/decorators';
+import { Query, UseGuards } from '@nestjs/common/decorators';
 import { RoomsService } from './rooms.service';
 import { CreateMessageDto, CreateRoomDto } from './dto/create-room.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -21,8 +21,8 @@ export class RoomsController {
   @Get()
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  findAll() {
-    return this.roomsService.findAll();
+  findAll(@Query("userId") userId: string) {
+    return this.roomsService.findAll(userId);
   }
 
   @Get(':id')

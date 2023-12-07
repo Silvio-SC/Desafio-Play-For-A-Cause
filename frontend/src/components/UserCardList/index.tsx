@@ -1,23 +1,37 @@
-import { Room, useUser } from "@/contexts/userContext"
-import api from "@/services/api"
-import { UserCard } from "../UserCard"
+import { Room } from "@/contexts/userContext"
+import { UserCard } from "./UserCard"
+import { useRouter } from "next/navigation"
 
-export const ContactList = () => {
-    let token = localStorage.getItem("@TokenPlay")
+export const ContactList = ({userRooms, user}: any) => {
+    const router = useRouter()
 
-    const { userRooms, user } = useUser()
+    const goToChat = (id:string) => {
+        router.push(`/Chat?room=${id}`)
+    }
 
-    let list = userRooms()
     let listOfCards: any[] = []
 
-    list.forEach((userRoom) => {
-        if ( userRoom.users.id != user?.id) {
-         const item = <UserCard name={userRoom.users.name} date={"date"} />
-         listOfCards = [...listOfCards, item]
+    for (let i = 0; i < userRooms.length; i++) {
+        const Room = userRooms[i];
+        const textsL = Room.texts.length
+        for (let j = 0; j < Room.users.length; j++) {
+            const userRoom = Room.users[j];
+            if ( userRoom.users.email !== user?.email) {
+                const item = (
+                    <button onClick={() => goToChat(Room.id)}>
+                        <UserCard 
+                            name={userRoom.users.name}
+                            text={textsL ? Room.texts[textsL - 1].text : ''}
+                            date={textsL ? Room.texts[textsL - 1].createdAt : ''} 
+                        />
+                    </button>
+                )
+                listOfCards = [...listOfCards, item]
+            }
         }
-      })
-      console.log(listOfCards)
+    }
 
+    console.log(userRooms)
     return (
         <>
             {listOfCards}

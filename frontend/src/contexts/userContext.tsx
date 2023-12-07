@@ -3,7 +3,7 @@ import { RegisterData } from "@/app/Register/registerSchema";
 import api from "@/services/api";
 import { jwtDecode } from "jwt-decode";
 import { useRouter} from "next/navigation";
-import { ReactNode, createContext, useContext, useState } from "react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
 interface Props {
   children: ReactNode;
@@ -61,9 +61,11 @@ interface UserProviderData {
     user: User | null
     setUser: React.Dispatch<React.SetStateAction<User | null>>
     token: string | null
-    countContacts: number
-    setCountContacts:React.Dispatch<React.SetStateAction<number>>
-    userRooms: () => any[]
+    userRooms: Room[] | []
+    setUserRooms:React.Dispatch<React.SetStateAction<Room[] | []>>
+    GetAllRooms: () => void
+    GetRoomById: (id: string) => void
+    room: Room | null
 }
 
 const UserContext = createContext<UserProviderData>({} as UserProviderData);
@@ -73,10 +75,11 @@ export const UserProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [countContacts, setCountContacts] = useState<number>(0);
+  const [userRooms, setUserRooms] = useState<Room[] | []>([]);
+  const [room, setRoom] = useState<Room | null>(null);
   
   const router = useRouter() 
-
+  
   const getUser = async () => {
     const tokenData = localStorage.getItem("@TokenPlay")!
     setToken(tokenData)
@@ -128,17 +131,31 @@ export const UserProvider = ({ children }: Props) => {
     router.push('/Dashboard')
   }
 
-  const userRooms = () => {
-    let listOfRooms: any[] = []
-    user?.rooms.forEach( async (room) => {
-      let {data}: {data: Room} = await api.get(`/rooms/${room.roomId}`, {
+  const GetAllRooms = async () => {
+    const tokenData = localStorage.getItem("@TokenPlay")!
+    const decoded = jwtDecode(tokenData!)
+
+
+      let {data}: {data: Room[]} = await api.get(`/rooms?userId=${decoded.sub} `, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${tokenData}`
         }
       })
-      listOfRooms = [...listOfRooms, data]
-    })
-    return listOfRooms
+
+    setUserRooms(data)
+    console.log(data)
+  }
+
+  const GetRoomById = async (id: string) => {
+    const tokenData = localStorage.getItem("@TokenPlay")!
+
+      let {data}: {data: Room} = await api.get(`/rooms/${id} `, {
+        headers: {
+          Authorization: `Bearer ${tokenData}`
+        }
+      })
+
+      setRoom(data)
   }
 
   return (
@@ -151,10 +168,12 @@ export const UserProvider = ({ children }: Props) => {
       user, 
       setUser, 
       logout, 
-      token, 
-      countContacts, 
-      setCountContacts,
-      userRooms
+      token,
+      userRooms, 
+      setUserRooms,
+      GetAllRooms,
+      GetRoomById,
+      room
 
       }}>
       {children}
