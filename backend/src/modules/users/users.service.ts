@@ -28,12 +28,13 @@ export class UsersService {
 
   async findAll() {
     const foundedUsers = await this.prisma.user.findMany()
-    return foundedUsers;
+    return plainToInstance(User, foundedUsers);
   }
 
   async findOne(id: string) {
     const foundedUser = await this.prisma.user.findUnique({
-      where: {id}
+      where: {id},
+      select: { email:true, id:true, name:true ,rooms: true}
     })
     return plainToInstance(User, foundedUser);
   }
@@ -53,7 +54,7 @@ export class UsersService {
     const foundedUser = await this.prisma.user.findUnique({
       where: {id}
     })
-    ''
+    
     await this.prisma.user.delete({
       where: {id}
     })

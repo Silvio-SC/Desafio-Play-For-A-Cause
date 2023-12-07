@@ -7,28 +7,36 @@ import { LoginData, LoginSchema } from "./loginSchema"
 import Image from "next/image"
 import logo from "../../../public/PlayLogo.png"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { redirect, useRouter } from "next/navigation"
+import { useUser } from "@/contexts/userContext"
+import { useEffect } from "react"
 
 export default function Login () {
+    
+    useEffect(() => {
+        const IsLogin = () => {
+            const token = localStorage.getItem("@TokenPlay")
 
-    // const {createAccount} = useContext(ClientContext)
-    // const { IsLogin } = useContext(Context)
+            if(token) {
+                redirect("/Dashboard")
+            }
+        }
+        IsLogin()
+    }, [])
 
-    // useEffect(() => {
-    //     IsLogin()
-    // }, [])
     const router = useRouter()
 
+    const { login, loading } = useUser()
 
-    const {handleSubmit, register} = useForm<LoginData>({
+    const {handleSubmit, register, reset, formState: { errors }} = useForm<LoginData>({
         resolver: zodResolver(LoginSchema)
     })
 
-    const submit = (data:LoginData) => {
-        // createAccount(data)
-        router.push('/Chat')
+    const submit = async (data:LoginData) => {
+        await login(data)
+        router.push('/Dashboard')
 
-
+        reset()
     }
 
     const svgLoading = (
@@ -38,7 +46,7 @@ export default function Login () {
               <animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/>
           </path>
       </svg>
-  )
+    )
 
     return (
         <main className="flex justify-center items-center h-screen bg-gradient-to-r from-gray-100 to-gray-300">
@@ -53,17 +61,19 @@ export default function Login () {
                         register={register('email')} 
                         placeholder={"insira seu email aqui..."} 
                         type={"email"} 
-                        label={"Email"}  />
+                        label={"Email"} 
+                        error={errors.email} />
                       <Input 
                         name={"password"} 
                         register={register('password')} 
                         placeholder={"insira sua senha aqui..."} 
                         type={"password"} 
-                        label={"Senha"}  />
+                        label={"Senha"} 
+                        error={errors.password} />
                     <button 
                         type="submit" 
                         className='bg-emerald-600 text-white p-2 rounded-2xl w-full max-w-xs mt-8 hover:bg-emerald-800 flex justify-center'>
-                        { false ? svgLoading : "Entrar" }
+                        { loading ? svgLoading : "Entrar" }
                     </button>
                     <p className="mt-6 text-sm lg:text-base">Ainda não é cadastrado? 
                       <Link href={"/Register"} className="hover:text-emerald-600"> registre-se aqui</Link>

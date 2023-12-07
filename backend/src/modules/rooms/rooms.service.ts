@@ -54,7 +54,7 @@ export class RoomsService {
   async findOne(id: string) {
     const foundedRoom = await this.prisma.room.findUnique({
       where: {id},
-      select: {texts: true, users: true}
+      select: {texts: true, users: { select: { users:true }}}
     })
     return plainToInstance(Room, foundedRoom);
   }

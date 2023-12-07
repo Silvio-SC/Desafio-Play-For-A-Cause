@@ -7,17 +7,23 @@ import {RegisterData, RegisterSchema } from "./registerSchema"
 import Image from "next/image"
 import logo from "../../../public/PlayLogo.png"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { redirect, useRouter } from "next/navigation"
 import { useUser } from "@/contexts/userContext"
-import api from "@/services/api"
+import { useEffect } from "react"
 
 export default function Register () {
 
-  // const { IsLogin } = useContext(Context)
-  
-  // useEffect(() => {
-    //     IsLogin()
-    // }, [])
+    useEffect(() => {
+    const IsLogin = () => {
+        const token = localStorage.getItem("@TokenPlay")
+
+        if(token) {
+            redirect("/Dashboard")
+        }
+    }
+
+    IsLogin()
+    }, [])
     const router = useRouter()
     
     const { createUser, loading } = useUser()
